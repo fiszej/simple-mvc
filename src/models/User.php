@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace app\src\models;
 
-use app\src\AbstractModel;
+use app\src\core\Model;
+use app\src\core\App;
+use app\src\core\DB;
 
-class User extends AbstractModel
+class User extends Model
 {
     public array $errors = [];
 
@@ -16,9 +18,16 @@ class User extends AbstractModel
     public string $passwdC = '';
 
     // Load data from request to class property.
-    public function loadToProperty(array $data)
+    public function loadToProperty(array $data, int $mode)
     {
-        $this->getDataFromRequest($data);
+        if ($mode == 1) {
+            $this->getDataFromRequest($data);
+            return;
+        }
+        if ($mode == 2) {
+            $this->loadFromDatabase($data);
+            return;
+        }
     }
 
     // Validate send data with definied rules.
@@ -71,4 +80,11 @@ class User extends AbstractModel
     {
 
     }
+
+    public function findOne($id)
+    {
+        return App::$db->findOneById($id);
+    }
+
+    
 }

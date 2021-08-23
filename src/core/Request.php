@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\src;
+namespace app\src\core;
 
 class Request 
 {

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace app\src\controllers;
 
-use app\src\Controller;
+use app\src\core\Controller;
 use app\src\models\User;
-use app\src\Request;
+use app\src\core\Request;
 
 class SiteController extends Controller 
 {
@@ -14,20 +14,29 @@ class SiteController extends Controller
 
     }
 
-    public function registerj()
+    public function create()
     {
-       $user = new User();
-       $user->loadToProperty($_GET);
-       $user->validate();
-
+        $user = new User();
+        $user->loadToProperty($_GET, 1);
+        $user->validate();
+        
+        if ($user->validate() && $user->save()) {
+            echo 'Success';
+        }
     
-       return $this->view('about', [
-           'errors' => $user->errors
-       ]);
+       
     }
 
     public function register()
     {
         return $this->view('register');
+    }
+
+    public function show()
+    {
+        $user = new User();
+        $user->loadToProperty($user->findOne(1), 2);
+
+        var_dump($user);
     }
 }
