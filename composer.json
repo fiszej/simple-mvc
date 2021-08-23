@@ -1,0 +1,9 @@
+{
+    "name": "mvc/project",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    }
+}
