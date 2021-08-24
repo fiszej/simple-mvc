@@ -6,9 +6,12 @@ namespace app\src\models;
 use app\src\core\Model;
 use app\src\core\App;
 use app\src\core\DB;
+use app\src\core\QueryBuilder;
 
 class User extends Model
 {
+    public const TABLE = 'users';
+
     public array $errors = [];
 
     public string $firstname = '';
@@ -25,7 +28,7 @@ class User extends Model
             return;
         }
         if ($mode == 2) {
-            $this->loadFromDatabase($data);
+            $this->loadDataFromDatabase($data);
             return;
         }
     }
@@ -33,7 +36,11 @@ class User extends Model
     // Validate send data with definied rules.
     public function validate()
     {
-       $this->required()->isEmail()->betwen()->passwordMatch();
+       $this->required()
+            ->isEmail()
+            ->betwen()
+            ->passwordMatch()
+            ->userExists();
     }
 
     public function isEmail()
@@ -74,17 +81,20 @@ class User extends Model
         return $this;
     }
 
-
-    // add user to DB.
-    public function save()
+    public function userExists()
     {
+        $sql = "SELECT * FROM ".self::TABLE." WHERE email = :email";
+        $stmt = App::$db->pdo->prepare($sql);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+        if (count($result) != 0) {
+            $this->errors['is_exists'] = 'User is already exists.';
+        }
+        return $this;
     }
 
-    public function findOne($id)
-    {
-        return App::$db->findOneById($id);
-    }
 
     
 }

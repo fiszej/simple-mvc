@@ -14,7 +14,8 @@ class Database
         $this-> pdo = new PDO(
             $config['dsn'],
             $config['username'],
-            $config['password']
+            $config['password'],
+            $config['options']
         );
     }
 

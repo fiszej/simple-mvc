@@ -16,7 +16,7 @@ abstract class Model
         }
     }
 
-    public function loadFromDatabase($data)
+    public function loadDataFromDatabase($data)
     {
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
