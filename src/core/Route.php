@@ -7,19 +7,19 @@ class Route
 {
     private array $routes = [];
 
-    // Define routing to correct Request method
+    
     public function get(string $path, $controller)
     {
         $this->routes['GET'][$path] = $controller;
     }
 
-    // Define routing to correct Request method
+    
     public function post(string $path, $controller)
     {
         $this->routes['POST'][$path] = $controller;
     }
 
-    // Direct traffic to correct callback.
+   
     public function direct()
     {
         $uri = Request::uri();
@@ -38,5 +38,6 @@ class Route
         }
 
         return call_user_func($callback);
+
     }
 }

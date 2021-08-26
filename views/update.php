@@ -1,8 +1,30 @@
-<?php include 'part/head.php'; ?>
+<?php include 'part/head.php'?>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <?php if(!isset($_SESSION['user'])) : ?>
+        <div class="navbar-nav">
+          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" href="/register">Register</a>
+        </div>
+    <?php endif; ?>
+    <?php if($_SESSION['user']): ?>
+      <div class="navbar-nav">
+          <a class="nav-link" href="/profile">Profile</a>
+          <a class="nav-link" href="/logout">Logout</a>
+      </div>
+    <?php endif ;?>
+    </div>
+  </div>
+</nav>
+<?php if(isset($_SESSION['flash']['403'])) : ?>
+    <h2 class="text-danger text-center"><?= $_SESSION['flash']['403'] ?? '' ?></h2>
+    <h3 class="text-success text-center"><a href="/login">Login</a></h3>
+<?php else: ?>
     <div class="container">
-            <h2 class="text-center">Register new account</h2>
-            <form class="form-control" action="/create" method="POST">
+        <h2 class="text-center">Update account</h2>
+            <form class="form-control" action="/update" method="POST">
                 <label>Firstname</label>
                 <input class="form-control" name="firstname" type="text" autocomplete="off" value="<?= $user->firstname ?? ''?>">
                 <span class="text-danger">
@@ -26,7 +48,7 @@
                     </small>
                 </span><br>
                 <label>Password</label>
-                <input class="form-control" name="passwd" type="password" autocomplete="off" value="<?= $user->passwd ?? ''?>">
+                <input class="form-control" name="passwd" type="password" autocomplete="off"">
                 <span class="text-danger">
                     <small>
                     <?= $errors['req'] ?? ''?>
@@ -48,5 +70,8 @@
                 <input class="btn btn-secondary btn-sm" type="submit" name="submit" value="Register">
             </form>
     </div>
+</body>
+</html>
+    <?php endif ;?>
 </body>
 </html>

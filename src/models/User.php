@@ -5,8 +5,6 @@ namespace app\src\models;
 
 use app\src\core\Model;
 use app\src\core\App;
-use app\src\core\DB;
-use app\src\core\QueryBuilder;
 
 class User extends Model
 {
@@ -14,6 +12,7 @@ class User extends Model
 
     public array $errors = [];
 
+    public string $id = '';
     public string $firstname = '';
     public string $lastname = '';
     public string $email = '';
@@ -46,7 +45,7 @@ class User extends Model
     public function isEmail()
     {
         if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors['email'] = 'Email is incorrect.';
+            $this->errors['email'] = 'Email is incorrect';
         }
         return $this;
     }
@@ -54,10 +53,10 @@ class User extends Model
     public function required() 
     {
         if (empty($this->firstname)) {
-            $this->errors['req'] = 'This Field is required';
+            $this->errors['req'] = 'This Field is required<br>';
         }
         if (empty($this->lastname)) {
-            $this->errors['req'] = 'This Field is required';
+            $this->errors['req'] = 'This Field is required<br>';
         }
         return $this;
     }

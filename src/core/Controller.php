@@ -7,6 +7,6 @@ abstract class Controller
 {
     public function view($view, $data = []) {
         extract($data);
-        include App::$APP_PATH."/views/$view.php";
+        include App::$PATH."/views/$view.php";
     }
 }

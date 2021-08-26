@@ -4,58 +4,49 @@ declare(strict_types=1);
 namespace app\src\controllers;
 
 use app\src\core\Controller;
-use app\src\core\QueryBuilder;
+use app\src\core\Session;
 use app\src\models\User;
-use app\src\core\Request;
-use app\src\core\Response;
+use app\src\core\QueryBuilder;
 
 class SiteController extends Controller 
 {
     public function index()
     {
-
+       return $this->view('index');
     }
-
-    public function create()
-    {     
-        $user = new User();
-        $user->loadToProperty($_POST, 1);
-        $user->validate();
-
-        $firstname = $user->firstname;
-        $lastname = $user->lastname;
-        $email = $user->email;
-        $passwd = password_hash($user->passwd, PASSWORD_BCRYPT);
-
-        if (!$user->errors) {
-           $qb = new QueryBuilder();
-           $qb->insert($user::TABLE, "firstname, lastname, email, passwd")
-              ->values([$firstname, $lastname, $email, $passwd])
-              ->executeInsertQuery();
-            return true;
-        }
-        return Response::setStatusCode(404);
-    }
-
+   
     public function register()
     {
         return $this->view('register');
     }
 
-    public function show()
+    public function login()
     {
-        
+        return $this->view('login');
+    }
+
+    public function profile()
+    {
+       
+        if (!isset($_SESSION['user'])) {
+            http_response_code(403);
+            Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
+        }
+
+        $email = $_SESSION['user'];
         $user = new User();
         $qb = new QueryBuilder();
+        $results = $qb->select('firstname, lastname, email, passwd')
+           ->from($user::TABLE)
+           ->where("email = '$email'")
+           ->executeSelectQuery();
 
-        $firstname = 'Radek';
-        $lastname = 'Kowalski';
-        $email = 'example@dot.com';
-        $passwd = password_hash('123123dasd', PASSWORD_BCRYPT);
-
-        $result = $qb
-            ->insert($user::TABLE, "firstname, lastname, email, passwd")
-            ->values([$firstname, $lastname, $email, $passwd])
-            ->executeInsertQuery();  
+        foreach ($results as $result) {
+            $user->loadToProperty($result, 2);
+        }
+        
+        return $this->view('profile', [
+            'user' => $user
+        ]);
     }
 }
