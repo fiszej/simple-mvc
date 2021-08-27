@@ -23,6 +23,7 @@
     <h3 class="text-success text-center"><a href="/login">Login</a></h3>
 <?php else: ?>
 <h4>Your profile data</h4>
+<h2 class="text-success text-center"><?= $_SESSION['flash']['success'] ?? ''?></h2>
 <pre>Firstname : <?= $user->firstname?></pre>
 <pre>Lastname : <?= $user->lastname?></pre>
 <pre>Email : <?= $user->email?></pre>

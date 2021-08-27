@@ -57,14 +57,18 @@ class AuthController extends Controller
             ->from($user::TABLE)
             ->where("email = '$email'")
             ->executeSelectQuery();
+
+            if ($results[0][$email] != $email) {
+                $user->errors['email'] = 'Account does not exist!';
+                
+            } 
           
-            foreach ($results as $result) {
-                if (password_verify($user->passwd, $result['passwd'])) {
-                    Session::setFlashMessage('success', 'Welcome to mvc');
-                    Session::set('user', $user->email);
-                    return $this->view('index');
-                }
-            }    
+            $result = $results[0];
+            if (password_verify($user->passwd, $result['passwd'])) {
+                Session::setFlashMessage('success', 'Welcome to mvc');
+                Session::set('user', $user->email);
+                return $this->view('index');
+            }
         }
         
         return $this->view('/login', [
@@ -72,30 +76,7 @@ class AuthController extends Controller
         ]);     
     }
 
-    public function update()
-    {
-        
-        if (!isset($_SESSION['user'])) {
-            http_response_code(403);
-            Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
-        }
 
-        $email = $_SESSION['user'];
-        $user = new User();
-        $qb = new QueryBuilder();
-        $results = $qb->select('firstname, lastname, email, passwd')
-           ->from($user::TABLE)
-           ->where("email = '$email'")
-           ->executeSelectQuery();
-
-        foreach ($results as $result) {
-            $user->loadToProperty($result, 2);
-        }
-        
-        return $this->view('update', [
-            'user' => $user
-        ]);
-    }
 
     public function logout()
     {

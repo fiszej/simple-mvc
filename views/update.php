@@ -39,14 +39,6 @@
                         <?= $errors['req']?>
                     </small>
                 </span><br>
-                <label>Email</label>
-                <input class="form-control" name="email" type="text" autocomplete="off" value="<?= $user->email ?? ''?>">
-                <span class="text-danger">
-                    <small>
-                        <?= $errors['email'] ?? '';?> 
-                        <?= $errors['is_exists'] ?? '';?> 
-                    </small>
-                </span><br>
                 <label>Password</label>
                 <input class="form-control" name="passwd" type="password" autocomplete="off"">
                 <span class="text-danger">

@@ -18,16 +18,4 @@ class Database
             $config['options']
         );
     }
-
-    public function findOneById($id)
-    {
-        $sql = "SELECT * FROM users WHERE id = :id";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-
-        return $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
 }

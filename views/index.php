@@ -21,8 +21,7 @@
 <?php if(isset($_SESSION['flash'])) : ?>
     <h2 class="text-success text-center"><?= $_SESSION['flash']['success'] ?? '' ?></h2>
     <h2 class="text-success text-center"><?= $_SESSION['user'] ?? '' ?></h2>
-    <?php elseif(!isset($_SESSION['user'])) :?>
-    <h3 class="text-success text-center"><a href="/login">Login to your account</a></h3>
+
 <?php endif ;?>
 </body>
 </html>
