@@ -12,30 +12,28 @@ class AuthController extends Controller
 {
     public function register()
     {     
-        $user = new User();
-        $user->loadToProperty($_POST, 1);
-        $user->validate();
+            $user = new User();
+            $user->loadToProperty($_POST, 1);
+            $user->validate();
 
-        $firstname = $user->firstname;
-        $lastname = $user->lastname;
-        $email = $user->email;
-        $passwd = password_hash($user->passwd, PASSWORD_BCRYPT);
+            $firstname = $user->firstname;
+            $lastname = $user->lastname;
+            $email = $user->email;
+            $passwd = password_hash($user->passwd, PASSWORD_BCRYPT);
 
-        if (!$user->errors) {
-           $qb = new QueryBuilder();
-           $qb->insert($user::TABLE, "firstname, lastname, email, passwd")
-           ->values([$firstname, $lastname, $email, $passwd])
-           ->executeInsertQuery();
+            if (!$user->errors) {
+                $qb = new QueryBuilder();
+                $qb->insert($user::TABLE, "firstname, lastname, email, passwd")
+                ->values([$firstname, $lastname, $email, $passwd])
+                ->executeInsertQuery();
 
-           Session::setFlashMessage('success', 'Register complete');
-            
-           return $this->view('index');
-        }
-
-        return $this->view('/register', [
-            'errors' => $user->errors,
-            'user' => $user
-        ]);
+                Session::setFlashMessage('success', 'Register complete');
+                return $this->view('index');
+            } 
+            return $this->view('/register', [
+                'errors' => $user->errors,
+                'user' => $user
+          ]);
     }
 
     public function login()
@@ -51,20 +49,17 @@ class AuthController extends Controller
         if (empty($user->errors)) {
             $email = $user->email;
             $qb = new QueryBuilder();
-
             $results = $qb
             ->select('*')
             ->from($user::TABLE)
             ->where("email = '$email'")
             ->executeSelectQuery();
 
-            if ($results[0][$email] != $email) {
+            if ($results[0]['email'] != $email) {
                 $user->errors['email'] = 'Account does not exist!';
                 
             } 
-          
-            $result = $results[0];
-            if (password_verify($user->passwd, $result['passwd'])) {
+            if (password_verify($user->passwd, $results[0]['passwd'])) {
                 Session::setFlashMessage('success', 'Welcome to mvc');
                 Session::set('user', $user->email);
                 return $this->view('index');
@@ -73,14 +68,13 @@ class AuthController extends Controller
         
         return $this->view('/login', [
             'errors' => $user->errors
-        ]);     
+        ]);  
     }
 
 
 
     public function logout()
     {
-
         Session::delete('user');
         Session::delete('flash');
         return header("Location: /");

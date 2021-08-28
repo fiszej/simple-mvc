@@ -9,4 +9,9 @@ abstract class Controller
         extract($data);
         include App::$PATH."/views/$view.php";
     }
+
+    public function redirect($path)
+    {
+        header("Location: $path");
+    }
 }

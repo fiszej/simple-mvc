@@ -27,49 +27,45 @@ class SiteController extends Controller
 
     public function profile()
     {
-       
-        if (!isset($_SESSION['user'])) {
-            http_response_code(403);
-            Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
-        }
+            if (!isset($_SESSION['user'])) {
+                http_response_code(403);
+                Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
+            }
+            $email = $_SESSION['user'];
+            $user = new User();
+            $qb = new QueryBuilder();
+            $results = $qb->select('firstname, lastname, email, passwd')
+            ->from($user::TABLE)
+            ->where("email = '$email'")
+            ->executeSelectQuery();
 
-        $email = $_SESSION['user'];
-        $user = new User();
-        $qb = new QueryBuilder();
-        $results = $qb->select('firstname, lastname, email, passwd')
-           ->from($user::TABLE)
-           ->where("email = '$email'")
-           ->executeSelectQuery();
-
-        $user->loadToProperty($results[0], 2);
-        
-        
-        return $this->view('profile', [
-            'user' => $user
-        ]);
+            $user->loadToProperty($results[0], 2);
+            
+            return $this->view('profile', [
+                'user' => $user
+            ]);
     }
 
     public function update()
     {
-        
-        if (!isset($_SESSION['user'])) {
-            http_response_code(403);
-            Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
-        }
+            if (!isset($_SESSION['user'])) {
+                http_response_code(403);
+                Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
+            }
 
-        $email = $_SESSION['user'];
-        $user = new User();
-        $qb = new QueryBuilder();
-        $results = $qb->select('firstname, lastname, email, passwd')
-           ->from($user::TABLE)
-           ->where("email = '$email'")
-           ->executeSelectQuery();
+            $email = $_SESSION['user'];
+            $user = new User();
+            $qb = new QueryBuilder();
+            $results = $qb->select('firstname, lastname, email, passwd')
+            ->from($user::TABLE)
+            ->where("email = '$email'")
+            ->executeSelectQuery();
 
-        $result = $results[0];
-        $user->loadToProperty($result, 2);
-        
-        return $this->view('update', [
-            'user' => $user
-        ]);
+            $result = $results[0];
+            $user->loadToProperty($result, 2);
+            
+            return $this->view('update', [
+                'user' => $user
+            ]);
     }
 }

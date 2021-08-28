@@ -52,19 +52,15 @@ class QueryBuilder
 
     public function executeSelectQuery()
     {
-        try {
-            $where = $this->vars === [] ? '' : " WHERE ".implode(' AND ', $this->vars);
+        
+            $where = $this->where === [] ? '' : " WHERE ".implode(' AND ', $this->where);
             $sql = "SELECT ". implode(', ', $this->fields)
                     ." FROM ". implode(', ', $this->table)
                     . $where;
             $stmt = App::$db->pdo->prepare($sql);
             $stmt->execute();
-            
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function executeUpdateQuery()
