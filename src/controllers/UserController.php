@@ -13,26 +13,30 @@ class UserController extends Controller
 {
     public function update()
     {
-        $user = new User();
-        $user->loadToProperty($_POST, 1);
-        $user->validate();
+        try {
+            $user = new User();
+            $user->loadToProperty($_POST, 1);
+            $user->validate();
 
-        $firstname = $user->firstname;
-        $lastname = $user->lastname;
-        $email = $_SESSION['user'];
-        $passwd = password_hash($user->passwd, PASSWORD_BCRYPT);
+            $firstname = $user->firstname;
+            $lastname = $user->lastname;
+            $email = $_SESSION['user'];
+            $passwd = password_hash($user->passwd, PASSWORD_BCRYPT);
 
-        $qb = new QueryBuilder();
-        $qb->update($user::TABLE)
-            ->set("firstname='$firstname', 
-                lastname='$lastname', 
-                passwd='$passwd'")
-            ->where("email='$email'")
-            ->executeUpdateQuery();
+            $qb = new QueryBuilder();
+            $qb->update($user::TABLE)
+                ->set("firstname='$firstname', 
+                    lastname='$lastname', 
+                    passwd='$passwd'")
+                ->where("email='$email'")
+                ->executeUpdateQuery();
+                
+            Session::setFlashMessage('success', 'Successfully updated');
+            Session::set('user', $email);
             
-        Session::setFlashMessage('success', 'Successfully updated');
-        Session::set('user', $email);
-        
-        return $this->redirect("/profile");
+            return $this->redirect("/profile");
+        } catch (\Exception $e) {
+            die('Cannot update account. Try again later ('.$e->getMessage().')');
+        }
     }
 }

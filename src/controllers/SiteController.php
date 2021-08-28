@@ -26,7 +26,8 @@ class SiteController extends Controller
     }
 
     public function profile()
-    {
+    {   
+        try {
             if (!isset($_SESSION['user'])) {
                 http_response_code(403);
                 Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
@@ -44,10 +45,14 @@ class SiteController extends Controller
             return $this->view('profile', [
                 'user' => $user
             ]);
+        } catch (\Exception $e) {
+            die($e->getMessage());
+        }   
     }
 
     public function update()
-    {
+    {   
+        try {
             if (!isset($_SESSION['user'])) {
                 http_response_code(403);
                 Session::setFlashMessage('403', 'You don\'t have permission to access profil page');
@@ -67,5 +72,8 @@ class SiteController extends Controller
             return $this->view('update', [
                 'user' => $user
             ]);
+        } catch (\Exception $e) {
+            die($e->getMessage());
+        }    
     }
 }

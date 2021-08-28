@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace app\src\core;
 
 use app\src\core\App;
-use Exception;
+
 
 class QueryBuilder
 {
@@ -52,7 +52,7 @@ class QueryBuilder
 
     public function executeSelectQuery()
     {
-        
+        try {
             $where = $this->where === [] ? '' : " WHERE ".implode(' AND ', $this->where);
             $sql = "SELECT ". implode(', ', $this->fields)
                     ." FROM ". implode(', ', $this->table)
@@ -61,6 +61,9 @@ class QueryBuilder
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }   
     }
 
     public function executeUpdateQuery()
@@ -74,7 +77,7 @@ class QueryBuilder
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -113,7 +116,7 @@ class QueryBuilder
 
             return 'succes';
 
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return $e->getMessage();
         }
         

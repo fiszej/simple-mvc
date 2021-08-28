@@ -11,7 +11,8 @@ use app\src\core\Session;
 class AuthController extends Controller
 {
     public function register()
-    {     
+    {   
+        try { 
             $user = new User();
             $user->loadToProperty($_POST, 1);
             $user->validate();
@@ -34,41 +35,48 @@ class AuthController extends Controller
                 'errors' => $user->errors,
                 'user' => $user
           ]);
+        } catch (\Exception $e) {
+            die('Cannot register account. Try again later ('.$e->getMessage().')');
+        }
     }
 
     public function login()
     {
-        $user = new User();
-        $user->loadToProperty($_POST, 1);
-        if (!$user->isEmail()) {
-            $user->errors['email'] = 'Email is incorrect';
-        }
-        if (!$user->passwd) {
-            $user->errors['passwd'] = 'Enter password';
-        }
-        if (empty($user->errors)) {
-            $email = $user->email;
-            $qb = new QueryBuilder();
-            $results = $qb
-            ->select('*')
-            ->from($user::TABLE)
-            ->where("email = '$email'")
-            ->executeSelectQuery();
-
-            if ($results[0]['email'] != $email) {
-                $user->errors['email'] = 'Account does not exist!';
-                
-            } 
-            if (password_verify($user->passwd, $results[0]['passwd'])) {
-                Session::setFlashMessage('success', 'Welcome to mvc');
-                Session::set('user', $user->email);
-                return $this->view('index');
+        try {
+            $user = new User();
+            $user->loadToProperty($_POST, 1);
+            if (!$user->isEmail()) {
+                $user->errors['email'] = 'Email is incorrect';
             }
+            if (!$user->passwd) {
+                $user->errors['passwd'] = 'Enter password';
+            }
+            if (empty($user->errors)) {
+                $email = $user->email;
+                $qb = new QueryBuilder();
+                $results = $qb
+                ->select('*')
+                ->from($user::TABLE)
+                ->where("email = '$email'")
+                ->executeSelectQuery();
+
+                if ($results[0]['email'] != $email) {
+                    $user->errors['email'] = 'Account does not exist!';
+                    
+                } 
+                if (password_verify($user->passwd, $results[0]['passwd'])) {
+                    Session::setFlashMessage('success', 'Welcome to mvc');
+                    Session::set('user', $user->email);
+                    return $this->view('index');
+                }
+            }
+            
+            return $this->view('/login', [
+                'errors' => $user->errors
+            ]);  
+        } catch (\Exception $e) {
+            die('Cannot login to account. Try again later ('.$e->getMessage().')');
         }
-        
-        return $this->view('/login', [
-            'errors' => $user->errors
-        ]);  
     }
 
 
